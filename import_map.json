@@ -1,0 +1,19 @@
+{
+  "imports": {
+    "image-size": "npm:image-size@^1",
+    "rehype-raw": "npm:rehype-raw@^7",
+    "rehype-stringify": "npm:rehype-stringify@^9",
+    "remark-directive": "npm:remark-directive@^3",
+    "remark-gfm": "npm:remark-gfm@^3",
+    "remark-parse": "npm:remark-parse@^10",
+    "remark-rehype": "npm:remark-rehype@^10",
+    "unified": "npm:unified@^10",
+    "unist-util-visit": "npm:unist-util-visit@^5",
+    "xast-util-from-xml": "npm:xast-util-from-xml@^4",
+    "hast": "npm:@types/hast@^3",
+    "mdast": "npm:@types/mdast@^3",
+    "unist": "npm:@types/unist@^3",
+    "xast": "npm:@types/xast@^2",
+    "std/assert": "https://deno.land/std@0.224.0/assert/mod.ts"
+  }
+}
