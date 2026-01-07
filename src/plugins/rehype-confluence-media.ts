@@ -35,11 +35,11 @@ function normalizeSizePx(v?: string | number): string | undefined {
   const m = s.match(/^(\d+)(px)?$/);
   return m ? m[1] : undefined;
 }
-async function fileExists(rt: RenderRuntime | null | undefined, filePath: string): Promise<boolean> {
+async function fileExists(rt: RenderRuntime | undefined, filePath: string): Promise<boolean> {
   const st = await rt?.fs?.stat(filePath);
   return Boolean(st?.isFile);
 }
-async function removeFile(rt: RenderRuntime | null | undefined, filePath: string): Promise<void> {
+async function removeFile(rt: RenderRuntime | undefined, filePath: string): Promise<void> {
   if (!rt?.fs?.remove) return;
   try {
     await rt.fs.remove(filePath);
@@ -47,7 +47,7 @@ async function removeFile(rt: RenderRuntime | null | undefined, filePath: string
     // ignore
   }
 }
-function readEnvNumber(name: string, rt: RenderRuntime | null | undefined): number | undefined {
+function readEnvNumber(name: string, rt: RenderRuntime | undefined): number | undefined {
   const raw = readEnv(name, rt);
   if (raw == null) return undefined;
   const num = Number(raw);
@@ -92,7 +92,7 @@ function rawNodeOfConfluenceImage(filename: string, meta?: { alt?: string; width
       (meta?.width ? ` width="${escapeAttr(meta.width)}"` : "") +
       (meta?.height ? ` height="${escapeAttr(meta.height)}"` : "") +
       ` />`,
-  } as Content;
+  } as unknown as Content;
 }
 function attachStub(file: string, width?: string, height?: string): Content {
   let s = `@@ATTACH|file=${file}`;
@@ -113,7 +113,7 @@ export default function rehypeConfluenceMedia(options: RehypeConfluenceMediaOpti
   return async function transformer(tree: Root) {
     const tasks: Promise<void>[] = [];
     let mermaidIndex = 0;
-    const runtime = resolveRuntime(options.runtime);
+    const runtime = resolveRuntime(options.runtime) ?? undefined;
 
     // 1) Mermaid: <code-block lang="mermaid">...</code-block> → <confluence-image .../>
 visit(tree, "element", (node: Element, index, parent) => {

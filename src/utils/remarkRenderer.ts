@@ -9,7 +9,6 @@ import { parseXmlToXast, getRootElement, localName, type XmlSanitizeOptions } fr
 import { AuthordAstAssembler, type AuthordAst, type BuildDocsetOptions, wrapMarkdownAsMdPageXast } from "../core/application/authord_ast_assembler.ts";
 import { IMAGE_DIR, getDefaultImageDir } from "./images.ts";
 import type { Element as XEl } from "xast";
-import type { Root as HastRoot } from "hast";
 
 export type RenderMarkdownOptions = {
   imageFolder?: string;
@@ -106,9 +105,8 @@ export async function renderTopicXast(
       tightSelfClosing: true,
     });
 
-  const hastRoot = hast as unknown as HastRoot;
-  const transformed = await proc.run(hastRoot);
-  const html = String(proc.stringify(transformed as HastRoot));
+  const transformed = await proc.run(hast as any);
+  const html = String(proc.stringify(transformed as any));
   return html;
 }
 

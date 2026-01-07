@@ -10,8 +10,6 @@ import type {
   Code,
   Image as MdImage,
   Paragraph,
-  Html,
-  RootContent,
   PhrasingContent,
 } from "mdast";
 import type { Parent as UnistParent, Node as UnistNode } from "unist";
@@ -37,6 +35,8 @@ type WithHData = UnistNode & {
   };
 };
 type NodeWithChildren = UnistNode & { children?: UnistNode[] };
+type Html = UnistNode & { type: "html"; value: string };
+type RootContent = MdRoot["children"][number];
 
 /* ----------------------------- Type guards ----------------------------- */
 function isParagraph(n: UnistNode): n is Paragraph { return !!n && (n as any).type === "paragraph"; }
@@ -66,11 +66,11 @@ function normalizeSizePx(v?: string | number): string | undefined {
   const m = s.match(/^(\d+)(px)?$/);
   return m ? m[1] : undefined;
 }
-async function fileExists(rt: RenderRuntime | null | undefined, filePath: string): Promise<boolean> {
+async function fileExists(rt: RenderRuntime | undefined, filePath: string): Promise<boolean> {
   const st = await rt?.fs?.stat(filePath);
   return Boolean(st?.isFile);
 }
-async function removeFile(rt: RenderRuntime | null | undefined, filePath: string): Promise<void> {
+async function removeFile(rt: RenderRuntime | undefined, filePath: string): Promise<void> {
   if (!rt?.fs?.remove) return;
   try {
     await rt.fs.remove(filePath);
@@ -78,7 +78,7 @@ async function removeFile(rt: RenderRuntime | null | undefined, filePath: string
     // ignore
   }
 }
-function readEnvNumber(name: string, rt: RenderRuntime | null | undefined): number | undefined {
+function readEnvNumber(name: string, rt: RenderRuntime | undefined): number | undefined {
   const raw = readEnv(name, rt);
   if (raw == null) return undefined;
   const num = Number(raw);
@@ -261,7 +261,7 @@ export default function remarkConfluenceMedia(options: RemarkConfluenceMediaOpti
   return async function transformer(tree: MdRoot) {
     const tasks: Promise<void>[] = [];
     let mermaidIndex = 0;
-    const runtime = resolveRuntime(options.runtime);
+    const runtime = resolveRuntime(options.runtime) ?? undefined;
 
     const setDimsFromHintMap = (widthVal?: string | number, heightVal?: string | number) => {
       const width = normalizeSizePx(widthVal);
