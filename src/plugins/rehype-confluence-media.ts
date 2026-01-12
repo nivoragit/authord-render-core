@@ -197,7 +197,6 @@ visit(tree, "element", (node: Element, index, parent) => {
     visit(tree, "element", (node: Element, index, parent) => {
       if (!parent || typeof index !== "number") return;
       if (node.tagName !== "img" || !node.properties) return;
-
       const src = String(node.properties.src ?? "");
       if (!src) return;
 
