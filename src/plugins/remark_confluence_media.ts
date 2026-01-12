@@ -105,18 +105,14 @@ function parseAttrBlock(text: string): Record<string, string> | null {
   if (!m) return null;
   const inner = m[1].trim();
   if (!inner) return {};
-  const entries = inner.split(/[,\s;]+/).map((kv) => kv.trim()).filter(Boolean);
   const map: Record<string, string> = {};
-  for (const kv of entries) {
-    const mm = kv.match(/^([^:=]+)\s*[:=]\s*(.+)$/);
-    if (!mm) {
-      const keyOnly = kv.trim().toLowerCase();
-      if (keyOnly) map[keyOnly] = "true";
-      continue;
-    }
-    const key = mm[1].trim().toLowerCase();
-    const val = stripQuotes(mm[2].trim());
-    map[key] = val;
+  const re = /([^\s:=]+)\s*(?:[:=]\s*(?:"([^"]*)"|'([^']*)'|([^\s}]+)))?/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(inner))) {
+    const key = match[1]!.trim().toLowerCase();
+    const rawVal = match[2] ?? match[3] ?? match[4];
+    if (rawVal == null) map[key] = "true";
+    else map[key] = stripQuotes(rawVal.trim());
   }
   return map;
 }
